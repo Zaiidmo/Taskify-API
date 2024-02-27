@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -14,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::where('user_id', auth('api')->user()->id)->get();
         return response()->json($tasks);
     }
 
@@ -29,9 +30,19 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+        ]);
+        $task = Task::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'user_id' => auth('api')->user()->id,
+        ]);
+
+        return response()->json(['message' => 'Task created successfully', 'task' => $task]);
     }
 
     /**

@@ -29,10 +29,10 @@ Route::controller(AuthController::class)->group(function () {
 
 // Route::post('TaskCreation', [TaskController::class, 'store']);
 
-Route::controller(TaskController::class)->group(function () {
-    Route::get('index', 'index');
-    Route::post('store', 'store');
-    Route::get('show', 'show');
-    Route::post('update', 'update');
-    Route::post('destroy', 'destroy');
+Route::prefix('tasks')->group(function () {
+    Route::get('/', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/', [TaskController::class, 'store'])->name('tasks.store');
+    Route::get('/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    Route::put('/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 });

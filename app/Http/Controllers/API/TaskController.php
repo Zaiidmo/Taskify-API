@@ -86,10 +86,25 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        if($task->user_id !== auth('api')->user()->id) {
+        if ($task->user_id !== auth('api')->user()->id) {
             return response()->json(['message' => 'You are not authorized to delete this task'], 401);
         }
         Task::destroy($task->id);
         return response()->json(['message' => 'Task deleted successfully'], 200);
+    }
+    public function makeItDone(Request $request, Task $task)
+    {
+        $task->Done();
+        return response()->json(['message' => 'Task marked as Done'], 200);
+    }
+    public function makeItDoing(Request $request, Task $task)
+    {
+        $task->Doing();
+        return response()->json(['message' => 'Task marked as Doing'], 200);
+    }
+    public function makeItToDo(Request $request, Task $task)
+    {
+        $task->ToDo();
+        return response()->json(['message' => 'Task marked as To Do'], 200);
     }
 }

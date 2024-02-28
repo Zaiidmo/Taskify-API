@@ -115,4 +115,43 @@ class TasksTest extends TestCase
         $this->assertNotEquals($newData['title'], $task->title);
         $this->assertNotEquals($newData['description'], $task->description);
     }
+    /** @test */
+    public function deleteMyTask()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by the authenticated user
+        $task = Task::factory()->create(['user_id' => $user->id]);
+
+        // Invoke the destroy method
+        $response = $this->deleteJson("/api/tasks/{$task->id}");
+
+        // Assert the response
+        $response->assertStatus(200)->assertJson(['message' => 'Task deleted successfully']);
+
+        // Ensure that the task was deleted from the database
+        $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
+    }
+
+    /** @test */
+    public function unauthorizedDelete()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by a different user
+        $task = Task::factory()->create();
+
+        // Invoke the destroy method
+        $response = $this->deleteJson("/api/tasks/{$task->id}");
+
+        // Assert the response
+        $response->assertStatus(401)->assertJson(['message' => 'You are not authorized to delete this task']);
+
+        // Ensure that the task was not deleted from the database
+        $this->assertDatabaseHas('tasks', ['id' => $task->id]);
+    }
 }

@@ -154,4 +154,127 @@ class TasksTest extends TestCase
         // Ensure that the task was not deleted from the database
         $this->assertDatabaseHas('tasks', ['id' => $task->id]);
     }
+    /** @test */
+    public function makeitDone()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by the authenticated user
+        $task = Task::factory()->create(['user_id' => $user->id]);
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/done");
+
+        // Assert the response
+        $response->assertStatus(200)->assertJson(['message' => 'Task marked as Done']);
+
+        // Ensure that the task status is updated to Done
+        $this->assertEquals('Done', $task->fresh()->status);
+    }
+
+    // Add similar tests for makeItDoing and makeItToDo methods
+
+    /** @test */
+    public function it_prevents_unauthorized_users_from_updating_task_status()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by a different user
+        $task = Task::factory()->create();
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/done");
+
+        // Assert the response
+        $response->assertStatus(401)->assertJson(['message' => 'You are not authorized to update this task']);
+
+        // Ensure that the task status is not updated
+        $this->assertNotEquals('Done', $task->fresh()->status);
+    }
+    /** @test */
+    public function makeItDoing()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by the authenticated user
+        $task = Task::factory()->create(['user_id' => $user->id]);
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/doing");
+
+        // Assert the response
+        $response->assertStatus(200)->assertJson(['message' => 'Task marked as Doing']);
+
+        // Ensure that the task status is updated to Done
+        $this->assertEquals('Doing', $task->fresh()->status);
+    }
+
+    // Add similar tests for makeItDoing and makeItToDo methods
+
+    /** @test */
+    public function it_prevents_unauthorized_users_from_updating_task_doing()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by a different user
+        $task = Task::factory()->create();
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/doing");
+
+        // Assert the response
+        $response->assertStatus(401)->assertJson(['message' => 'You are not authorized to update this task']);
+
+        // Ensure that the task status is not updated
+        $this->assertNotEquals('doing', $task->fresh()->status);
+    }
+    /** @test */
+    public function makeItToDo()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by the authenticated user
+        $task = Task::factory()->create(['user_id' => $user->id]);
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/todo");
+
+        // Assert the response
+        $response->assertStatus(200)->assertJson(['message' => 'Task marked as To Do']);
+
+        // Ensure that the task status is updated to To Do
+        $this->assertEquals('To Do', $task->fresh()->status);
+    }
+
+    // Add similar tests for makeItDoing and makeItToDo methods
+
+    /** @test */
+    public function it_prevents_unauthorized_users_from_updating_task_status_toDo()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by a different user
+        $task = Task::factory()->create();
+
+        // Invoke the makeItDone method
+        $response = $this->putJson("/api/tasks/{$task->id}/todo");
+
+        // Assert the response
+        $response->assertStatus(401)->assertJson(['message' => 'You are not authorized to update this task']);
+
+        // Ensure that the task status is not updated
+        $this->assertNotEquals('ToDo', $task->fresh()->status);
+    }
 }

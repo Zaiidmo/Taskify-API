@@ -72,6 +72,9 @@ class TaskController extends Controller
             'description' => 'required|string',
         ]);
 
+        if ($task->user_id !== auth('api')->user()->id) {
+            return response()->json(['message' => 'You are not authorized to update this task'], 401);
+        }
         // Update the task with the new data
         $task->title = $request->title;
         $task->description = $request->description;
@@ -94,16 +97,25 @@ class TaskController extends Controller
     }
     public function makeItDone(Request $request, Task $task)
     {
+        if ($task->user_id !== auth('api')->user()->id) {
+            return response()->json(['message' => 'You are not authorized to update this task'], 401);
+        }
         $task->Done();
         return response()->json(['message' => 'Task marked as Done'], 200);
     }
     public function makeItDoing(Request $request, Task $task)
     {
+        if ($task->user_id !== auth('api')->user()->id) {
+            return response()->json(['message' => 'You are not authorized to update this task'], 401);
+        }
         $task->Doing();
         return response()->json(['message' => 'Task marked as Doing'], 200);
     }
     public function makeItToDo(Request $request, Task $task)
     {
+        if ($task->user_id !== auth('api')->user()->id) {
+            return response()->json(['message' => 'You are not authorized to update this task'], 401);
+        }
         $task->ToDo();
         return response()->json(['message' => 'Task marked as To Do'], 200);
     }

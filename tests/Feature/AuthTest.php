@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -56,5 +57,15 @@ class AuthTest extends TestCase
                 ],
             ]);
     }
-    
+    public function testLogout()
+{
+    $user = User::factory()->create();
+    $token = JWTAuth::fromUser($user);
+
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        ->postJson('/api/logout');
+
+    $response->assertStatus(200);
+}
+
 }

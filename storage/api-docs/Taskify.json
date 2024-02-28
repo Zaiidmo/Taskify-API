@@ -1,290 +1,177 @@
 {
 	"swagger": "2.0",
 	"info": {
-	  "title": "Taskify API",
-	  "version": "1.0.0",
-	  "description": "API documentation for Taskify"
+	  "title": "Taskify",
+	  "version": "1.0.0"
 	},
-	"host": "127.0.0.1:8000",
+	"tags": [
+	  {
+		"name": "Auth",
+		"description": "Authentication Endpoints"
+	  },
+	  {
+		"name": "Tasks",
+		"description": "Task Management Endpoints"
+	  }
+	],
+	"schemes": [
+	  "http"
+	],
 	"basePath": "/api",
-	"schemes": ["http"],
 	"paths": {
 	  "/register": {
 		"post": {
-		  "summary": "Register a user",
-		  "description": "This endpoint is used to register a user.",
-		  "consumes": ["application/json"],
-		  "produces": ["application/json"],
+		  "tags": [
+			"Auth"
+		  ],
+		  "summary": "Register",
+		  "description": "This endpoint is used to register a user. Upon successful execution, it returns a JSON response containing a message and user details including name, email, creation and update timestamps, and user ID.",
+		  "consumes": [
+			"application/json"
+		  ],
+		  "produces": [
+			"application/json"
+		  ],
 		  "parameters": [
 			{
-			  "in": "body",
 			  "name": "body",
-			  "description": "User information",
+			  "in": "body",
+			  "description": "User registration details",
 			  "required": true,
 			  "schema": {
 				"type": "object",
 				"properties": {
 				  "name": {
-					"type": "string"
+					"type": "string",
+					"example": "John Doe"
 				  },
 				  "email": {
-					"type": "string"
+					"type": "string",
+					"example": "johndoe@example.com"
 				  },
 				  "password": {
-					"type": "string"
+					"type": "string",
+					"example": "password"
 				  }
 				}
 			  }
 			}
 		  ],
-		  "responses": {
-			"200": {
-			  "description": "Successful registration",
-			  "schema": {
-				"type": "object",
-				"properties": {
-				  "message": {
-					"type": "string"
-				  },
-				  "user": {
-					"type": "object",
-					"properties": {
-					  "name": {
-						"type": "string"
-					  },
-					  "email": {
-						"type": "string"
-					  },
-					  "created_at": {
-						"type": "string",
-						"format": "date-time"
-					  },
-					  "updated_at": {
-						"type": "string",
-						"format": "date-time"
-					  },
-					  "id": {
-						"type": "integer",
-						"format": "int64"
-					  }
-					}
-				  }
-				}
-			  }
-			}
-		  }
+		  "responses": {}
 		}
 	  },
 	  "/login": {
 		"post": {
+		  "tags": [
+			"Auth"
+		  ],
 		  "summary": "Login",
 		  "description": "This API endpoint is used to authenticate and login a user.",
-		  "consumes": ["application/x-www-form-urlencoded"],
-		  "produces": ["application/json"],
+		  "consumes": [
+			"application/x-www-form-urlencoded"
+		  ],
+		  "produces": [
+			"application/json"
+		  ],
 		  "parameters": [
 			{
-			  "in": "formData",
 			  "name": "email",
-			  "description": "User email",
+			  "in": "formData",
+			  "description": "The email address of the user.",
 			  "required": true,
-			  "type": "string"
+			  "type": "string",
+			  "example": "johndoe@example.com"
 			},
 			{
-			  "in": "formData",
 			  "name": "password",
-			  "description": "User password",
+			  "in": "formData",
+			  "description": "The password of the user.",
 			  "required": true,
-			  "type": "string"
+			  "type": "string",
+			  "example": "password"
 			}
 		  ],
-		  "responses": {
-			"200": {
-			  "description": "Successful login",
-			  "schema": {
-				"type": "object",
-				"properties": {
-				  "user": {
-					"type": "object",
-					"properties": {
-					  "id": {
-						"type": "integer",
-						"format": "int64"
-					  },
-					  "name": {
-						"type": "string"
-					  },
-					  "email": {
-						"type": "string"
-					  },
-					  "email_verified_at": {
-						"type": "string",
-						"format": "date-time"
-					  },
-					  "created_at": {
-						"type": "string",
-						"format": "date-time"
-					  },
-					  "updated_at": {
-						"type": "string",
-						"format": "date-time"
-					  }
-					}
-				  },
-				  "authorization": {
-					"type": "object",
-					"properties": {
-					  "token": {
-						"type": "string"
-					  },
-					  "type": {
-						"type": "string"
-					  }
-					}
-				  }
-				}
-			  }
-			}
-		  }
+		  "responses": {}
 		}
 	  },
 	  "/logout": {
 		"post": {
+		  "tags": [
+			"Auth"
+		  ],
 		  "summary": "Logout",
 		  "description": "This endpoint is used to log out the user from the system.",
-		  "produces": ["application/json"],
-		  "responses": {
-			"200": {
-			  "description": "Successful logout"
-			}
-		  }
+		  "responses": {}
 		}
 	  },
 	  "/refresh": {
 		"post": {
-		  "summary": "Refresh Token",
+		  "tags": [
+			"Auth"
+		  ],
+		  "summary": "Refresh",
 		  "description": "This endpoint is used to refresh the authentication token.",
-		  "produces": ["application/json"],
-		  "responses": {
-			"200": {
-			  "description": "Token refreshed"
-			}
-		  }
+		  "responses": {}
 		}
 	  },
 	  "/tasks": {
 		"post": {
-		  "summary": "Create a Task",
-		  "description": "This endpoint is used to create a new task.",
-		  "consumes": ["application/json"],
-		  "produces": ["application/json"],
-		  "parameters": [
-			{
-			  "in": "body",
-			  "name": "body",
-			  "description": "Task information",
-			  "required": true,
-			  "schema": {
-				"type": "object",
-				"properties": {
-				  "title": {
-					"type": "string"
-				  },
-				  "description": {
-					"type": "string"
-				  }
-				}
-			  }
-			}
+		  "tags": [
+			"Tasks"
 		  ],
-		  "responses": {
-			"200": {
-			  "description": "Task created successfully"
-			}
-		  }
+		  "summary": "Create a Task",
+		  "responses": {}
 		},
 		"get": {
+		  "tags": [
+			"Tasks"
+		  ],
 		  "summary": "Display My Tasks",
-		  "description": "This endpoint is used to display all tasks associated with the user.",
-		  "produces": ["application/json"],
-		  "responses": {
-			"200": {
-			  "description": "List of tasks",
-			  "schema": {
-				"type": "array",
-				"items": {
-				  "type": "object",
-				  "properties": {
-					"title": {
-					  "type": "string"
-					},
-					"description": {
-					  "type": "string"
-					}
-				  }
-				}
-			  }
-			}
-		  }
+		  "description": "This endpoint sends an HTTP GET request to retrieve a list of tasks from the specified API.",
+		  "responses": {}
 		}
 	  },
 	  "/tasks/{id}": {
 		"put": {
-		  "summary": "Update My Task",
-		  "description": "This endpoint is used to update a task.",
-		  "consumes": ["application/json"],
-		  "produces": ["application/json"],
-		  "parameters": [
-			{
-			  "in": "path",
-			  "name": "id",
-			  "description": "Task ID",
-			  "required": true,
-			  "type": "integer",
-			  "format": "int64"
-			},
-			{
-			  "in": "body",
-			  "name": "body",
-			  "description": "Updated task information",
-			  "required": true,
-			  "schema": {
-				"type": "object",
-				"properties": {
-				  "title": {
-					"type": "string"
-				  },
-				  "description": {
-					"type": "string"
-				  }
-				}
-			  }
-			}
+		  "tags": [
+			"Tasks"
 		  ],
-		  "responses": {
-			"200": {
-			  "description": "Task updated successfully"
-			}
-		  }
+		  "summary": "Update My Task",
+		  "responses": {}
 		},
 		"delete": {
-		  "summary": "Delete My Task",
-		  "description": "This endpoint is used to delete a task.",
-		  "produces": ["application/json"],
-		  "parameters": [
-			{
-			  "in": "path",
-			  "name": "id",
-			  "description": "Task ID",
-			  "required": true,
-			  "type": "integer",
-			  "format": "int64"
-			}
+		  "tags": [
+			"Tasks"
 		  ],
-		  "responses": {
-			"200": {
-			  "description": "Task deleted successfully"
-			}
-		  }
+		  "summary": "Delete My Task",
+		  "responses": {}
+		}
+	  },
+	  "/tasks/{id}/done": {
+		"put": {
+		  "tags": [
+			"Tasks"
+		  ],
+		  "summary": "Make It Done",
+		  "responses": {}
+		}
+	  },
+	  "/tasks/{id}/doing": {
+		"put": {
+		  "tags": [
+			"Tasks"
+		  ],
+		  "summary": "Make it Doing",
+		  "responses": {}
+		}
+	  },
+	  "/tasks/{id}/todo": {
+		"put": {
+		  "tags": [
+			"Tasks"
+		  ],
+		  "summary": "Make it To Do",
+		  "responses": {}
 		}
 	  }
 	}

@@ -56,5 +56,63 @@ class TasksTest extends TestCase
         $this->assertDatabaseHas('tasks', $taskData);
     }
     /** @test */
-    
+    public function updateMyTask()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by the authenticated user
+        $task = Task::factory()->create(['user_id' => $user->id]);
+
+        // New data for updating the task
+        $newData = [
+            'title' => 'Updated Title',
+            'description' => 'Updated Description',
+        ];
+
+        // Invoke the update method
+        $response = $this->putJson("/api/tasks/{$task->id}", $newData);
+
+        // Assert the response
+        $response->assertStatus(200)->assertJson([
+            'message' => 'Task updated successfully',
+            'task' => $newData,
+        ]);
+
+        // Refresh the task model instance from the database
+        $task->refresh();
+
+        // Assert that the task was updated with the new data
+        $this->assertEquals($newData['title'], $task->title);
+        $this->assertEquals($newData['description'], $task->description);
+    }
+
+    /** @test */
+    public function unauthorizedUpdater()
+    {
+        // Create a user and authenticate
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+
+        // Create a task owned by a different user
+        $task = Task::factory()->create();
+
+        // New data for updating the task
+        $newData = [
+            'title' => 'Updated Title',
+            'description' => 'Updated Description',
+        ];
+
+        // Invoke the update method
+        $response = $this->putJson("/api/tasks/{$task->id}", $newData);
+
+        // Assert the response
+        $response->assertStatus(401)->assertJson(['message' => 'You are not authorized to update this task']);
+
+        // Ensure that the task was not updated
+        $task->refresh();
+        $this->assertNotEquals($newData['title'], $task->title);
+        $this->assertNotEquals($newData['description'], $task->description);
+    }
 }
